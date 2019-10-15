@@ -1,0 +1,187 @@
+#include <Stepper.h>
+#include <SoftwareSerial.h>
+#include <dht.h>
+const int stepsPerRevolution = 200;
+Stepper myStepper(stepsPerRevolution, 8,9,10,11);   
+#define dht_dpin A0
+#define lcdscreen 6
+dht DHT;
+SoftwareSerial LCD = SoftwareSerial(0, lcdscreen);
+const int LCDdelay = 6;
+void lcdPosition(int row, int col) {
+LCD.write(0xFE);
+LCD.write((col + row*64 + 128));
+delay(LCDdelay);
+}
+void clearLCD(){
+  LCD.write(0xFE);
+  LCD.write(0x01);
+  delay(LCDdelay);
+}
+void backlightOn() 
+{ 
+  LCD.write(0x7C);
+LCD.write(157);
+  delay(LCDdelay);
+}
+void backlightOff(){
+  LCD.write(0x7C);
+  LCD.write(128); 
+   delay(LCDdelay);
+}
+void serCommand(){ 
+  LCD.write(0xFE);
+}
+Servo myservo;           
+int rled = 13;
+int gled = 12;
+int buzz = 3;
+int pinLB = A3;
+const int buttonPin = A1;
+const int servoPin = 5;
+int beep();
+int signalon();
+int signaloff();
+int weather();
+int stepper();
+int myservoloop1();
+int myservoloop2();
+int pos = 0;
+int counter = 0;
+String stringOne;
+String stringTwo;
+int sum;
+boolean lastLbStatus;
+int loopcount = 0;
+unsigned int buttonState = 0;
+void setup()
+{
+  pinMode(servoPin, OUTPUT);         
+  pinMode(rled, OUTPUT);
+  pinMode(gled, OUTPUT);
+  pinMode(buzz, OUTPUT);
+  pinMode(pinLB,INPUT);
+  pinMode(dht_dpin, INPUT);
+  pinMode(lcdscreen, OUTPUT);
+  LCD.begin(9600);
+  delay(300);
+  clearLCD();
+  lcdPosition(0,0);
+  myservo.attach(5);
+myStepper.setSpeed(10);
+}
+void loop()
+{
+  digitalWrite(rled, HIGH);
+  do
+  {
+    weather();
+  }
+    while (rled == HIGH);
+digitalWrite(rled, LOW);
+delay(500);          
+digitalWrite(gled, HIGH);
+do
+  {
+     beep();
+     stepper();    
+     pillcounter();
+     signaloff();
+  }
+    while (gled == HIGH);
+}
+int beep()
+{
+  void loop();
+  {
+      tone(3,50); 
+  }
+}
+int weather()
+{
+void loop();
+{
+ DHT.read11(dht_dpin);
+ LCD.print("Humidity =");
+    LCD.print(DHT.humidity);
+    LCD.print("%");
+    LCD.print("Temp = ");
+    LCD.print(DHT.temperature);
+    LCD.println("C");
+  delay(5000);
+  clearLCD();
+  }
+}
+int stepper()
+{
+  void loop();
+  {
+  myStepper.step(25);
+  }
+}
+int pillcounter()
+{
+  int newLbStatus;
+  buttonState = analogRead(buttonPin);
+ while(buttonState > 100)
+  {
+        newLbStatus = analogRead(pinLB);
+        if(newLbStatus > 70)
+        {
+          counter = counter + 1;
+          stringOne = "Number of pills: ";
+          stringTwo = stringOne + counter;
+          LCD.print(stringTwo);
+          delay(500);
+          clearLCD();
+          sum = counter;
+        }
+  buttonState = analogRead(buttonPin);
+  continue;
+}   
+      LCD.print("Number of pills: ");
+      LCD.print(sum);
+      counter = 0;
+      sum = counter;
+    noTone(3)
+      myservoloop1();
+}
+int myservoloop1()
+{
+  void loop();
+  {
+    for(pos = 0; pos < 90; pos += 1)
+    {                               
+      myservo.write(pos);      
+      delay(15);              
+    }
+  }
+}
+int signaloff()
+{
+  void loop();
+  {
+  buttonState = analogRead(buttonPin);
+  while(buttonState > 100)
+  {
+  buttonState = analogRead(buttonPin);
+  continue;
+  }}
+   clearLCD(); 
+   digitalWrite(gled,LOW);
+
+      delay(500);
+      myservoloop2();
+}
+int myservoloop2()
+{
+  void loop();
+
+  {
+      for(pos = 90; pos>=1; pos-=1)
+      {                               
+    myservo.write(pos);              
+    delay(15); 
+  }
+}
+}
